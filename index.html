@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>G10 FX Factor Lens</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#f8f9fb;
+  --card:#ffffff;
+  --ink:#111827;
+  --mute:#6b7280;
+  --line:#e5e7eb;
+  --pos:#1a7f4b;
+  --neg:#c23b3b;
+  --acc:#1f3a5f;
+  --chip:#f1f3f6;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px)
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+.mono,label,.lbl,th,.num{font-family:"DM Mono",ui-monospace,Menlo,monospace}
+.wrap{max-width:1160px;margin:0 auto;padding:28px 20px 64px}
+header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px}
+h1{font:600 18px/1.2 Inter,system-ui,sans-serif;margin:0;letter-spacing:-.01em}
+h1 span{font-weight:500;color:var(--mute);margin-left:12px;padding-left:12px;border-left:1px solid var(--line)}
+h2{font:600 18px/1.2 Inter,system-ui,sans-serif;margin:0 0 4px}
+.sub{color:var(--mute);font-size:13px;margin-top:6px}
+.hdr-right{display:flex;align-items:center;gap:14px}
+.asof-badge{display:flex;align-items:center;gap:6px;font:500 12px "DM Mono",monospace;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 10px;color:var(--mute)}
+.asof-badge select{border:0;background:transparent;padding:2px 4px;font:500 12px "DM Mono",monospace;color:var(--ink);cursor:pointer;outline:none}
+.asof-badge input[type=date]{border:0;background:transparent;padding:0;font:500 12px "DM Mono",monospace;color:var(--ink);cursor:pointer;outline:none;width:18px}
+.asof-badge input[type=date]::-webkit-calendar-picker-indicator{cursor:pointer;opacity:0.6;margin-left:-2px}
+.asof-badge input[type=date]::-webkit-calendar-picker-indicator:hover{opacity:1}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--pos);display:inline-block}
+.dot.warn{background:#d97706}
+nav{display:flex;gap:4px;background:var(--chip);padding:4px;border-radius:999px}
+nav a{font:500 12px "DM Mono",monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);text-decoration:none;padding:8px 16px;border-radius:999px;cursor:pointer;transition:.15s}
+nav a.on{background:var(--card);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.grid{display:grid;grid-template-columns:360px 1fr;gap:20px;align-items:start}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}
+.lbl,label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--mute)}
+.row{display:flex;gap:8px;align-items:center}
+select,input[type=text],input[type=number]{font:500 14px "DM Mono",monospace;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px;width:100%;min-width:0}
+select:focus,input:focus{outline:2px solid var(--acc);outline-offset:1px}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex:none}
+.seg button{font:500 12px "DM Mono",monospace;border:0;background:var(--bg);color:var(--mute);padding:10px 12px;cursor:pointer}
+.seg button.on{background:var(--ink);color:var(--bg)}
+.btn{font:500 13px "DM Mono",monospace;background:var(--acc);color:#fff;border:0;border-radius:8px;padding:11px 16px;cursor:pointer;width:100%;transition:.15s}
+.btn:hover{filter:brightness(1.1)}
+.btn.ghost{background:none;color:var(--acc);border:1px dashed var(--acc);margin-top:8px}
+.btn.ghost:hover{background:var(--chip)}
+.field{margin-bottom:14px}
+.field>label{display:block;margin-bottom:6px}
+.quick{margin:18px 0 6px}
+.hint{font-size:12px;color:var(--mute);margin-top:6px}
+.pos{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid var(--line);font-family:"DM Mono",monospace;font-size:14px}
+.pos .w{margin-left:auto;margin-right:12px}
+.pos button{background:none;border:0;color:var(--mute);cursor:pointer;font-size:18px;line-height:1}
+.pos button:hover{color:var(--neg)}
+.tag{font-size:10px;padding:2px 7px;border-radius:99px;margin-left:8px;background:var(--chip);color:var(--mute)}
+.up{color:var(--pos)}
+.dn{color:var(--neg)}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 4px}
+.stat{background:var(--chip);border-radius:10px;padding:8px 12px;min-width:95px}
+.stat b{display:block;font:500 16px "DM Mono",monospace}
+.fx{display:grid;grid-template-columns:190px 1fr 76px;gap:12px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}
+.fx:first-of-type{border-top:0}
+.fx .n{font-weight:600;font-size:14px}
+.fx .t{font-size:10px;font-family:"DM Mono",monospace;padding:1px 6px;border-radius:4px;background:var(--chip);color:var(--mute);margin-left:6px;vertical-align:middle}
+.fx .d{font-size:11px;color:var(--mute);margin-top:2px}
+.track{position:relative;height:16px}
+.track:before{content:"";position:absolute;left:50%;top:-5px;bottom:-5px;width:1px;background:var(--line)}
+.bar{position:absolute;top:2px;height:12px;border-radius:3px;transition:all .35s ease}
+.num{text-align:right;font-size:14px}
+@media(max-width:560px){.fx{grid-template-columns:1fr 64px}.fx .track{grid-column:1/3;order:3}}
+.empty{text-align:center;color:var(--mute);padding:34px 10px}
+.take{font:500 15px/1.4 Inter,system-ui,sans-serif;margin:6px 0 16px;color:var(--ink)}
+details{margin-top:18px;border-top:1px solid var(--line);padding-top:14px}
+summary{cursor:pointer;font:500 12px "DM Mono",monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);outline:none;user-select:none}
+summary:hover{color:var(--ink)}
+.scroll{overflow-x:auto;margin-top:12px}
+table{border-collapse:collapse;width:100%;font-size:12px}
+th{font-weight:400;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);text-align:right;padding:7px 6px}
+th:first-child,td:first-child{text-align:left}
+td{padding:7px 6px;text-align:right;font-family:"DM Mono",monospace;white-space:nowrap}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}
+.chip{font:500 12px "DM Mono",monospace;background:var(--chip);color:var(--ink);border:1px solid var(--line);border-radius:99px;padding:8px 14px;cursor:pointer;transition:.15s}
+.chip:hover{background:var(--line)}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.sl{display:grid;grid-template-columns:160px 1fr 54px;gap:10px;align-items:center;padding:7px 0;font-size:13px}
+.sl input{width:100%;accent-color:var(--acc);cursor:pointer}
+.big{font:600 44px/1 Inter,system-ui,sans-serif;letter-spacing:-.02em;margin:6px 0 2px}
+.big small{font:400 13px "DM Mono",monospace;color:var(--mute);margin-left:6px}
+.hide{display:none}
+.plhead{display:flex;justify-content:space-between;align-items:center;margin:24px 0 4px}
+.lnk{background:none;border:0;color:var(--mute);font:500 11px "DM Mono",monospace;cursor:pointer;text-transform:uppercase;letter-spacing:.08em}
+.lnk:hover{color:var(--neg)}
+.pos.new{animation:fl 1.2s ease}
+@keyframes fl{from{background:var(--chip)}to{background:transparent}}
+.none{color:var(--mute);font-size:13px;padding:12px 0;border-top:1px solid var(--line)}
+.inwrap{position:relative;flex:1;min-width:0}
+.inwrap input{padding-right:36px}
+.sfx{position:absolute;right:11px;top:50%;transform:translateY(-50%);font:500 12px "DM Mono",monospace;color:var(--mute);pointer-events:none}
+.drop{border:1px dashed #cbd2dc;border-radius:10px;min-height:68px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:13px;cursor:pointer;color:var(--mute);background:var(--bg);transition:.15s;margin-top:6px}
+.drop b{color:var(--ink);font-weight:500}
+.drop:hover,.drop.over,.drop:focus-visible{border-color:var(--acc);background:var(--chip);outline:none}
+.grid-legs{display:grid;grid-template-columns:repeat(auto-fill,minmax(95px,1fr));gap:8px;margin-top:10px}
+.leg-box{background:var(--chip);border-radius:8px;padding:6px 10px;font-family:"DM Mono",monospace;font-size:12px}
+.leg-box .n{color:var(--mute);font-size:11px}
+.leg-box .v{font-size:13px;font-weight:500;margin-top:2px}
+.rst-btn{font:500 11px "DM Mono",monospace;background:none;border:1px solid var(--line);border-radius:6px;padding:4px 8px;color:var(--mute);cursor:pointer;margin-left:8px}
+.rst-btn:hover{color:var(--ink);border-color:var(--mute)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="brand">
+    <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+      <rect width="26" height="26" rx="6" fill="var(--acc)"/>
+      <rect x="6" y="12" width="3" height="8" rx="1.5" fill="#fff"/>
+      <rect x="11.5" y="6" width="3" height="14" rx="1.5" fill="#fff"/>
+      <rect x="17" y="9" width="3" height="11" rx="1.5" fill="#fff" opacity=".7"/>
+    </svg>
+    <h1>G10 FX<span>Factor Lens</span></h1>
+  </div>
+  <div class="hdr-right">
+    <div class="asof-badge">
+      <span class="dot" id="db-dot" title="Database status"></span>
+      <span>As-of:</span>
+      <select id="asof-select" aria-label="Select as-of date"></select>
+      <input type="date" id="asof-calendar" aria-label="Jump to date via calendar" title="Jump to date via calendar">
+    </div>
+    <nav>
+      <a href="#exposures" id="t-exposures" class="on">Exposures</a>
+      <a href="#stress" id="t-stress">Stress test</a>
+    </nav>
+  </div>
+</header>
+<div id="snapshot-notice" class="sub" role="status" style="margin:-14px 0 18px"></div>
+
+<div class="grid">
+  <!-- Left Column: Portfolio Input -->
+  <aside class="card">
+    <h2>Portfolio</h2>
+    <div class="sub" style="margin:0 0 18px">Weights are % of NAV.</div>
+    <div class="field">
+      <label>Pair</label>
+      <div class="row">
+        <select id="a" aria-label="Base currency"></select>
+        <span class="mono" style="color:var(--mute)">/</span>
+        <select id="b" aria-label="Quote currency"></select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Direction &amp; weight (% of NAV)</label>
+      <div class="row">
+        <div class="seg" id="dir">
+          <button class="on" data-d="1">Long</button>
+          <button data-d="-1">Short</button>
+        </div>
+        <div class="inwrap">
+          <input type="number" id="w" min="0" step="0.5" value="10" aria-label="Weight in percent of NAV">
+          <span class="sfx">%</span>
+        </div>
+      </div>
+    </div>
+    <button class="btn" id="add">Add position</button>
+    <div class="plhead">
+      <label>Positions <span id="pcount"></span></label>
+      <button class="lnk" id="clear">Clear all</button>
+    </div>
+    <div id="plist"></div>
+    <div class="quick">
+      <label>Import</label>
+      <div class="drop" id="drop" tabindex="0" role="button" aria-label="Import positions from a CSV file">
+        <b>Drop a CSV</b>
+      </div>
+      <input type="file" id="f" accept=".csv,text/csv" class="hide">
+      <div class="hint" id="csvmsg"></div>
+    </div>
+    <button class="btn ghost" id="demo">Load an example portfolio</button>
+  </aside>
+
+  <!-- Right Column: Results & Analysis -->
+  <main>
+    <!-- Exposures View -->
+    <section id="v-exposures" class="card">
+      <h2>Macro-factor exposure</h2>
+      <div class="sub">Estimated P&amp;L in bps of NAV for a +1σ move in each factor.</div>
+      <div id="stats" class="stats"></div>
+      <div id="take" class="take"></div>
+      <div id="bars"></div>
+
+      <details id="contrib">
+        <summary>Contribution by position</summary>
+        <div class="scroll" id="ctable"></div>
+      </details>
+
+      <details id="risk-decomp">
+        <summary>Risk &amp; Currency Decomposition</summary>
+        <div style="margin-top:12px">
+          <div class="lbl">Net currency exposure (% of NAV)</div>
+          <div id="legs" class="grid-legs"></div>
+        </div>
+      </details>
+    </section>
+
+    <!-- Stress Test View -->
+    <section id="v-stress" class="card hide">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <h2>Stress test</h2>
+          <div class="sub">Pick a scenario or dial the shocks yourself (in σ).</div>
+        </div>
+        <button class="rst-btn" id="rst-shocks">Reset dials</button>
+      </div>
+
+      <div class="chips" id="presets"></div>
+      <div class="lbl">Estimated portfolio P&amp;L</div>
+      <div class="big" id="pnl">0<small>bps of NAV</small></div>
+      <div id="sbars" style="margin-top:14px"></div>
+
+      <details open>
+        <summary>Shock dials</summary>
+        <div id="sliders" style="margin-top:10px"></div>
+      </details>
+
+      <details>
+        <summary>P&amp;L by position</summary>
+        <div class="scroll" id="ptable"></div>
+      </details>
+    </section>
+  </main>
+</div>
+</div>
+
+<script>
+// Model values are loaded from the live API or the generated static snapshot.
+var CCY = ['EUR','GBP','AUD','NZD','USD','CAD','CHF','JPY','NOK','SEK'];
+var F = [], L = {}, PRE = {}, MODEL = null;
+
+var S = [], dir = 1, shock = F.map(function(){return 0}), preset = '';
+var lastAdded = null, serverOnline = false;
+function ensureShockSize(){
+  if (shock.length !== F.length) shock = F.map(function(){ return 0; });
+}
+function setModelAvailability(available){
+  ['a','b','w','add','demo','f'].forEach(function(id){ $(id).disabled = !available; });
+  $('drop').setAttribute('aria-disabled', available ? 'false' : 'true');
+  $('drop').style.pointerEvents = available ? '' : 'none';
+  $('dir').querySelectorAll('button').forEach(function(button){ button.disabled = !available; });
+}
+function validModel(data){
+  var ccy = ['AUD','CAD','CHF','EUR','GBP','JPY','NOK','NZD','SEK'];
+  var matrix = function(value, rows, cols){
+    return Array.isArray(value) && value.length === rows && value.every(function(row){
+      return Array.isArray(row) && row.length === cols && row.every(function(v){ return Number.isFinite(v); });
+    });
+  };
+  return data && data.status === 'ok' && typeof data.asof_date === 'string' &&
+    Array.isArray(data.factors) && data.factors.length === 8 &&
+    matrix(data.asset_exposures, 9, 8) && matrix(data.factor_covariance, 8, 8) &&
+    data.specific_variances && ccy.every(function(c){ return Number.isFinite(data.specific_variances[c]); });
+}
+
+var $ = function(id){ return document.getElementById(id); };
+var fmt = function(x, d){
+  d = d == null ? 1 : d;
+  var r = Number(x).toFixed(d);
+  if (+r === 0) return (0).toFixed(d);
+  return (x > 0 ? '+' : '\u2212') + Math.abs(x).toFixed(d);
+};
+var cls = function(x){ return x > 0.05 ? 'up' : x < -0.05 ? 'dn' : ''; };
+
+// Vector of factor moves for one position: w * (L[base] - L[quote])
+var vec = function(p){
+  var lb = L[p.b] || [0,0,0,0,0,0,0,0];
+  var lq = L[p.q] || [0,0,0,0,0,0,0,0];
+  return F.map(function(_, i){ return p.w * (lb[i] - lq[i]); });
+};
+
+// Exact factor and specific variance decomposition in backend log-return units.
+function localRisk(){
+  var x = MODEL.asset_exposures, cov = MODEL.factor_covariance;
+  var ccy = ['AUD','CAD','CHF','EUR','GBP','JPY','NOK','NZD','SEK'];
+  var fx = Array(8).fill(0), sx = Array(9).fill(0);
+  S.forEach(function(p){
+    var w = p.w / 100;
+    var bi = ccy.indexOf(p.b), qi = ccy.indexOf(p.q);
+    for (var k=0;k<8;k++) fx[k] += w * ((bi < 0 ? 0 : x[bi][k]) - (qi < 0 ? 0 : x[qi][k]));
+    if (bi >= 0) sx[bi] += w;
+    if (qi >= 0) sx[qi] -= w;
+  });
+  var fv = 0;
+  for (var i=0;i<8;i++) for (var j=0;j<8;j++) fv += fx[i] * cov[i][j] * fx[j];
+  var sv = ccy.reduce(function(a,c,i){ return a + sx[i] * sx[i] * MODEL.specific_variances[c]; },0);
+  var tv = fv + sv, ann = Math.sqrt(252) * 100;
+  return {factor:Math.sqrt(Math.max(fv,0))*ann, specific:Math.sqrt(Math.max(sv,0))*ann,
+    total:Math.sqrt(Math.max(tv,0))*ann, ratio:tv > 1e-12 ? sv/tv*100 : 0};
+}
+
+// Populate currency dropdowns
+function initCurrencies(){
+  ['a','b'].forEach(function(id, j){
+    var el = $(id);
+    el.innerHTML = '';
+    CCY.forEach(function(c, i){
+      var o = document.createElement('option');
+      o.value = o.textContent = c;
+      if (i === (j ? 4 : 0)) o.selected = true; // EUR / USD default
+      el.appendChild(o);
+    });
+  });
+}
+
+function addPos(x, y, w){
+  if (!MODEL || x === y || !w) return false;
+  // Normalize to standard market convention order: EUR > GBP > AUD > NZD > USD > CAD > CHF > JPY > NOK > SEK
+  if (CCY.indexOf(x) > CCY.indexOf(y)){
+    var t = x; x = y; y = t; w = -w;
+  }
+  var e = S.filter(function(p){ return p.b === x && p.q === y; })[0];
+  if (e){
+    lastAdded = e;
+    e.w += w;
+    if (Math.abs(e.w) < 1e-9) S = S.filter(function(p){ return p !== e; });
+  } else {
+    lastAdded = {b: x, q: y, w: w};
+    S.push(lastAdded);
+  }
+  render();
+  return true;
+}
+
+$('dir').onclick = function(e){
+  var d = e.target.dataset.d;
+  if (!d) return;
+  dir = +d;
+  [].forEach.call($('dir').children, function(b){ b.classList.toggle('on', b.dataset.d === d); });
+};
+
+$('add').onclick = function(){
+  if ($('a').value === $('b').value){ $('a').focus(); return; }
+  var weight = dir * Math.abs(parseFloat($('w').value) || 0);
+  if (addPos($('a').value, $('b').value, weight)){
+    $('w').select();
+  }
+};
+
+function loadCSV(t, name){
+  var n = 0, bad = 0; S = [];
+  t.split(/\r?\n/).forEach(function(l){
+    l = l.trim();
+    if (!l) return;
+    var c = l.toUpperCase().replace(/\u2212/g, '-').split(/[,;\t]/);
+    var m = (c[0] || '').replace(/[^A-Z]/g, '').match(/^([A-Z]{3})([A-Z]{3})$/);
+    var w = parseFloat((c[1] || '').replace(/[^0-9.+-]/g, ''));
+    if (!m || isNaN(w) || CCY.indexOf(m[1]) < 0 || CCY.indexOf(m[2]) < 0){
+      if (!/PAIR/.test(c[0])) bad++;
+      return;
+    }
+    if (addPos(m[1], m[2], w)) n++; else bad++;
+  });
+  $('csvmsg').textContent = (name ? name + ' \u00b7 ' : '') + n + ' position' + (n === 1 ? '' : 's') + ' loaded' + (bad ? ' \u00b7 ' + bad + ' row' + (bad === 1 ? '' : 's') + ' skipped' : '');
+  render();
+}
+
+function readFile(f){
+  if (!f) return;
+  var r = new FileReader();
+  r.onload = function(){ loadCSV(r.result, f.name); };
+  r.readAsText(f);
+}
+
+$('drop').onclick = function(){ $('f').click(); };
+$('drop').onkeydown = function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); $('f').click(); } };
+$('drop').ondragover = function(e){ e.preventDefault(); this.classList.add('over'); };
+$('drop').ondragleave = function(){ this.classList.remove('over'); };
+$('drop').ondrop = function(e){ e.preventDefault(); this.classList.remove('over'); readFile(e.dataTransfer.files[0]); };
+$('f').onchange = function(){ readFile(this.files[0]); this.value = ''; };
+
+$('demo').onclick = function(){
+  S = [];
+  addPos('AUD','JPY', 20);
+  addPos('EUR','USD', 15);
+  addPos('GBP','CHF', -10);
+  addPos('USD','CAD', 12);
+  addPos('NOK','SEK', 8);
+};
+
+$('clear').onclick = function(){ S = []; $('csvmsg').textContent = ''; render(); };
+$('plist').onclick = function(e){
+  var i = e.target.dataset.rm;
+  if (i == null) return;
+  S.splice(+i, 1);
+  render();
+};
+
+function barRow(name, ticker, desc, val, max){
+  var pct = Math.min(Math.abs(val) / max, 1) * 50;
+  var side = val >= 0 ? 'left:50%' : 'right:50%';
+  return '<div class="fx">' +
+    '<div><div class="n">' + name + (ticker ? '<span class="t">' + ticker + '</span>' : '') + '</div>' +
+    (desc ? '<div class="d">' + desc + '</div>' : '') + '</div>' +
+    '<div class="track"><div class="bar" style="' + side + ';width:' + pct + '%;background:var(' + (val >= 0 ? '--pos' : '--neg') + ')"></div></div>' +
+    '<div class="num ' + cls(val) + '">' + fmt(val) + '</div>' +
+    '</div>';
+}
+
+function heat(v, max){
+  var a = Math.min(Math.abs(v) / max, 1) * 0.45;
+  return 'background:color-mix(in srgb,var(' + (v >= 0 ? '--pos' : '--neg') + ') ' + Math.round(a * 100) + '%,transparent)';
+}
+
+function render(){
+  if (!MODEL){
+    S = [];
+    $('plist').innerHTML = '<div class="none">Portfolio input is disabled while model data is unavailable.</div>';
+    $('pcount').textContent = '';
+    $('stats').innerHTML = '';
+    $('take').textContent = '';
+    $('bars').innerHTML = '<div class="empty">Model data is unavailable. Factor exposure and stress results cannot be calculated.</div>';
+    $('ctable').innerHTML = '';
+    $('contrib').classList.add('hide');
+    $('risk-decomp').classList.add('hide');
+    $('sbars').innerHTML = '<div class="empty">Model data is unavailable.</div>';
+    $('pnl').textContent = 'Unavailable';
+    $('ptable').innerHTML = '';
+    $('clear').style.display = 'none';
+    return;
+  }
+  // Positions list
+  $('plist').innerHTML = S.map(function(p, i){
+    return '<div class="pos' + (p === lastAdded ? ' new' : '') + '">' +
+      '<span>' + p.b + '/' + p.q + '<span class="tag">' + (p.w > 0 ? 'LONG' : 'SHORT') + '</span></span>' +
+      '<span class="w ' + (p.w > 0 ? 'up' : 'dn') + '">' + fmt(p.w) + '%</span>' +
+      '<button data-rm="' + i + '" aria-label="Remove \u00d7">\u00d7</button>' +
+      '</div>';
+  }).join('');
+  $('pcount').textContent = S.length ? '(' + S.length + ')' : '';
+  $('clear').style.display = S.length ? '' : 'none';
+  if (!S.length) $('plist').innerHTML = '<div class="none">No positions yet. Add one above.</div>';
+  lastAdded = null;
+
+  var tot = F.map(function(_, i){
+    return S.reduce(function(a, p){ return a + vec(p)[i]; }, 0);
+  });
+  var gross = S.reduce(function(a, p){ return a + Math.abs(p.w); }, 0);
+  var net = S.reduce(function(a, p){ return a + p.w; }, 0);
+
+  // Currency legs calculation
+  var legs = {};
+  CCY.forEach(function(c){ legs[c] = 0; });
+  S.forEach(function(p){
+    legs[p.b] = (legs[p.b] || 0) + p.w;
+    legs[p.q] = (legs[p.q] || 0) - p.w;
+  });
+
+  if (!S.length){
+    $('stats').innerHTML = '';
+    $('take').textContent = '';
+    $('bars').innerHTML = '<div class="empty">Your factor exposures will appear here.<br>Add a pair on the left to get started.</div>';
+    $('ctable').innerHTML = '';
+    $('contrib').classList.add('hide');
+    $('risk-decomp').classList.add('hide');
+  } else {
+    $('contrib').classList.remove('hide');
+    $('risk-decomp').classList.remove('hide');
+
+    var statsHTML = [
+      ['Positions', S.length],
+      ['Gross', gross.toFixed(1) + '%'],
+      ['Net', fmt(net) + '%']
+    ];
+    $('stats').innerHTML = statsHTML.map(function(s){
+      return '<div class="stat"><span class="lbl">' + s[0] + '</span><b>' + s[1] + '</b></div>';
+    }).join('');
+
+    var mx = Math.max.apply(null, tot.map(Math.abs));
+    var k = tot.map(Math.abs).indexOf(mx);
+    var maxScale = Math.max(10, mx * 1.15);
+
+    $('take').textContent = mx < 0.05
+      ? 'Close to factor-neutral across all monitored factors.'
+      : 'Your largest macro bet is ' + F[k][0] + ' (' + fmt(tot[k]) + ' bps per +1\u03c3 move).';
+
+    $('bars').innerHTML = F.map(function(f, i){
+      return barRow(f[0], f[1], f[2], tot[i], maxScale);
+    }).join('');
+
+    // Contribution table
+    var cm = Math.max.apply(null, [1].concat(S.map(function(p){
+      return Math.max.apply(null, vec(p).map(Math.abs));
+    })));
+    $('ctable').innerHTML = '<table><tr><th>Position</th>' +
+      F.map(function(f){ return '<th>' + (f[1] || f[0].split(' ')[0]) + '</th>'; }).join('') +
+      '</tr>' +
+      S.map(function(p){
+        var v = vec(p);
+        return '<tr><td>' + p.b + '/' + p.q + ' ' + fmt(p.w, 0) + '%</td>' +
+          v.map(function(x){ return '<td style="' + heat(x, cm) + '">' + fmt(x) + '</td>'; }).join('') +
+          '</tr>';
+      }).join('') + '</table>';
+
+    // Currency legs rendering
+    $('legs').innerHTML = CCY.map(function(c){
+      var v = legs[c] || 0;
+      return '<div class="leg-box"><div class="n">' + c + '</div><div class="v ' + cls(v) + '">' + fmt(v) + '%</div></div>';
+    }).join('');
+
+    if (MODEL){
+      var risk = localRisk();
+      var statTail = [
+        ['Total Vol', risk.total.toFixed(2) + '% p.a.'],
+        ['Factor Vol', risk.factor.toFixed(2) + '% p.a.'],
+        ['Specific Vol', risk.specific.toFixed(2) + '% p.a.'],
+        ['Specific %', risk.ratio.toFixed(0) + '%']
+      ];
+      $('stats').innerHTML += statTail.map(function(s){ return '<div class="stat"><span class="lbl">' + s[0] + '</span><b>' + s[1] + '</b></div>'; }).join('');
+    }
+    if (serverOnline){
+      syncServerRisk();
+    }
+  }
+
+  renderStress(tot);
+}
+
+function syncServerRisk(){
+  if (!S.length) return;
+  var asof = $('asof-select').value;
+  var payload = {
+    asof_date: asof,
+    positions: S.map(function(p){ return {base: p.b, quote: p.q, weight: p.w}; })
+  };
+  fetch('/api/calculate', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(payload)
+  }).then(function(r){ return r.json(); })
+    .then(function(res){
+      if (!res || !res.data) return;
+      var d = res.data;
+      var statsHTML = [
+        ['Positions', d.positions_count],
+        ['Gross NAV', d.gross_exposure.toFixed(1) + '%'],
+        ['Net NAV', fmt(d.net_exposure) + '%'],
+        ['Total Vol', d.total_vol_ann_pct.toFixed(2) + '% p.a.'],
+        ['Factor Vol', d.factor_vol_ann_pct.toFixed(2) + '% p.a.'],
+        ['Specific Vol', d.specific_vol_ann_pct.toFixed(2) + '% p.a.'],
+        ['Specific %', d.specific_ratio_pct.toFixed(0) + '%']
+      ];
+      $('stats').innerHTML = statsHTML.map(function(s){
+        return '<div class="stat"><span class="lbl">' + s[0] + '</span><b>' + s[1] + '</b></div>';
+      }).join('');
+    }).catch(function(){ /* ignore background calculation errors */ });
+}
+
+function renderStress(tot){
+  var contrib = F.map(function(_, i){ return tot[i] * shock[i]; });
+  var total = contrib.reduce(function(a, b){ return a + b; }, 0);
+  var big = $('pnl');
+  big.className = 'big ' + cls(total);
+  big.innerHTML = fmt(total, 0) + '<small>bps of NAV</small>';
+
+  var mx = Math.max(10, Math.max.apply(null, contrib.map(Math.abs)) * 1.15);
+  $('sbars').innerHTML = S.length
+    ? F.map(function(f, i){
+        return barRow(f[0], f[1], 'shock ' + fmt(shock[i]) + '\u03c3', contrib[i], mx);
+      }).join('')
+    : '<div class="empty">Add positions on the left to run a stress test.</div>';
+
+  $('ptable').innerHTML = S.length
+    ? '<table><tr><th>Position</th><th>P&amp;L (bps)</th></tr>' +
+      S.map(function(p){
+        var v = vec(p).reduce(function(a, x, i){ return a + x * shock[i]; }, 0);
+        return '<tr><td>' + p.b + '/' + p.q + ' ' + fmt(p.w, 0) + '%</td><td class="' + cls(v) + '">' + fmt(v) + '</td></tr>';
+      }).join('') + '</table>'
+    : '';
+}
+
+function buildStress(){
+  $('presets').innerHTML = Object.keys(PRE).map(function(k){
+    return '<button class="chip' + (preset === k ? ' on' : '') + '" data-p="' + k + '">' + k + '</button>';
+  }).join('');
+
+  $('sliders').innerHTML = F.map(function(f, i){
+    return '<div class="sl">' +
+      '<span>' + f[0] + '</span>' +
+      '<input type="range" min="-3" max="3" step="0.5" value="' + shock[i] + '" data-i="' + i + '" aria-label="' + f[0] + ' shock">' +
+      '<span class="num">' + fmt(shock[i]) + '</span>' +
+      '</div>';
+  }).join('');
+}
+
+$('presets').onclick = function(e){
+  var p = e.target.dataset.p;
+  if (!p) return;
+  preset = preset === p ? '' : p;
+  shock = preset ? PRE[p].slice() : F.map(function(){ return 0; });
+  buildStress();
+  render();
+};
+
+$('sliders').oninput = function(e){
+  var i = e.target.dataset.i;
+  if (i == null) return;
+  shock[+i] = parseFloat(e.target.value);
+  e.target.nextElementSibling.textContent = fmt(shock[+i]);
+  preset = '';
+  [].forEach.call($('presets').children, function(c){ c.classList.remove('on'); });
+  render();
+};
+
+$('rst-shocks').onclick = function(){
+  preset = '';
+  shock = F.map(function(){ return 0; });
+  buildStress();
+  render();
+};
+
+function route(){
+  var v = location.hash === '#stress' ? 'stress' : 'exposures';
+  ['exposures','stress'].forEach(function(n){
+    $('v-' + n).classList.toggle('hide', n !== v);
+    $('t-' + n).classList.toggle('on', n === v);
+  });
+}
+window.addEventListener('hashchange', route);
+
+// Load model from server or fallback
+function loadServerModel(asofDate){
+  var url = '/api/model' + (asofDate ? '?asof_date=' + encodeURIComponent(asofDate) : '');
+  fetch(url)
+    .then(function(r){
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(data){
+      if (!validModel(data)) throw new Error('live model unavailable or malformed');
+      applyModel(data, false);
+    })
+    .catch(function(){
+      // The relative URL also works on project-scoped GitHub Pages paths.
+      fetch('model_snapshot.json').then(function(r){
+        if (!r.ok) throw new Error('snapshot unavailable');
+        return r.json();
+      }).then(function(data){
+        if (!validModel(data) || !data.generated_at || !data.source) throw new Error('invalid snapshot');
+        applyModel(data, true);
+      }).catch(function(){
+        serverOnline = false; MODEL = null;
+        setModelAvailability(false);
+        $('db-dot').className = 'dot warn';
+        $('db-dot').title = 'Model snapshot unavailable';
+        $('snapshot-notice').textContent = 'Model data is unavailable. Refresh the published snapshot or connect to the local model server.';
+        $('asof-select').innerHTML = '<option>Unavailable</option>';
+        $('asof-select').disabled = true;
+        $('asof-calendar').disabled = true;
+        render();
+      });
+    });
+}
+
+function applyModel(data, isStatic){
+      serverOnline = !isStatic;
+      MODEL = data;
+      setModelAvailability(true);
+      $('db-dot').className = isStatic ? 'dot warn' : 'dot';
+      $('db-dot').title = isStatic ? 'Static model snapshot' : 'Connected to SQLite database';
+      $('snapshot-notice').textContent = isStatic
+        ? 'Static model snapshot · as of ' + data.asof_date + ' · generated ' + data.generated_at + ' · ' + data.source + '. Portfolio inputs stay in this browser.'
+        : 'Live database model · as of ' + data.asof_date + '. Portfolio inputs are sent only to this local server for risk calculation.';
+
+      // Update factor metadata and loadings from SQLite
+      if (data.factors && data.factors.length){
+        F = data.factors.map(function(f){
+          return [f.name, f.ticker, f.desc, f.sigma_bps];
+        });
+      }
+      if (data.loadings) L = data.loadings;
+      if (data.presets) PRE = data.presets;
+      if (data.currencies) CCY = data.currencies;
+      ensureShockSize();
+
+      // Populate asof dropdown with year grouping
+      var sel = $('asof-select');
+      sel.innerHTML = '';
+      var dates = isStatic ? [data.asof_date] : (data.available_dates || [data.asof_date]);
+      var groups = {};
+      dates.forEach(function(d){
+        var yr = d.substring(0, 4);
+        if (!groups[yr]) groups[yr] = [];
+        groups[yr].push(d);
+      });
+      Object.keys(groups).sort().reverse().forEach(function(yr){
+        var grp = document.createElement('optgroup');
+        grp.label = yr + ' (' + groups[yr].length + ' dates)';
+        groups[yr].forEach(function(d){
+          var o = document.createElement('option');
+          o.value = d;
+          o.textContent = (d === dates[0]) ? d + ' (Latest)' : d;
+          if (d === data.asof_date) o.selected = true;
+          grp.appendChild(o);
+        });
+        sel.appendChild(grp);
+      });
+
+      // Synchronize calendar input min, max, value
+      var cal = $('asof-calendar');
+      if (cal && dates.length){
+        cal.min = dates[dates.length - 1];
+        cal.max = dates[0];
+        cal.value = data.asof_date;
+      }
+
+      $('asof-select').disabled = isStatic;
+      $('asof-calendar').disabled = isStatic;
+      buildStress();
+      render();
+}
+
+$('asof-select').onchange = function(){
+  if ($('asof-calendar')) $('asof-calendar').value = this.value;
+  if (serverOnline) loadServerModel(this.value);
+};
+
+$('asof-calendar').onchange = function(){
+  var picked = this.value;
+  if (!picked || !serverOnline) return;
+  var dates = Array.from($('asof-select').options).map(function(o){ return o.value; });
+  if (dates.indexOf(picked) >= 0){
+    $('asof-select').value = picked;
+    loadServerModel(picked);
+  } else {
+    // Snap to closest preceding trading date if weekend/holiday was picked
+    var earlier = dates.filter(function(d){ return d <= picked; });
+    var target = earlier.length ? earlier[0] : dates[dates.length - 1];
+    $('asof-select').value = target;
+    this.value = target;
+    loadServerModel(target);
+  }
+};
+
+// Initial boot
+initCurrencies();
+buildStress();
+loadServerModel();
+route();
+</script>
+</body>
+</html>
