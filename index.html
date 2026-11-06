@@ -118,6 +118,15 @@ td{padding:7px 6px;text-align:right;font-family:"DM Mono",monospace;white-space:
 .leg-box .v{font-size:13px;font-weight:500;margin-top:2px}
 .rst-btn{font:500 11px "DM Mono",monospace;background:none;border:1px solid var(--line);border-radius:6px;padding:4px 8px;color:var(--mute);cursor:pointer;margin-left:8px}
 .rst-btn:hover{color:var(--ink);border-color:var(--mute)}
+.asof-static-pill{font:500 12px "DM Mono",monospace;color:var(--ink);padding:2px 4px}
+.cs-card{background:var(--chip);border:1px solid var(--line);border-radius:12px;padding:22px;margin-bottom:20px}
+.cs-tag{display:inline-block;font:600 10px "DM Mono",monospace;letter-spacing:.08em;text-transform:uppercase;background:var(--acc);color:#fff;padding:3px 8px;border-radius:4px;margin-bottom:10px}
+.cs-card h2{font-size:18px;margin:0 0 6px}
+.cs-card .sub{font-size:13px;color:var(--mute);margin:0 0 14px;line-height:1.5}
+.cs-features{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:12px}
+.cs-feature{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.cs-feature b{display:block;font-size:13px;font-weight:600;margin-bottom:4px;color:var(--ink)}
+.cs-feature p{margin:0;font-size:12px;color:var(--mute);line-height:1.4}
 </style>
 </head>
 <body>
@@ -133,15 +142,16 @@ td{padding:7px 6px;text-align:right;font-family:"DM Mono",monospace;white-space:
     <h1>G10 FX<span>Factor Lens</span></h1>
   </div>
   <div class="hdr-right">
-    <div class="asof-badge">
+    <div class="asof-badge" id="asof-badge-wrap">
       <span class="dot" id="db-dot" title="Database status"></span>
       <span>As-of:</span>
+      <span id="asof-static-label" class="asof-static-pill hide"></span>
       <select id="asof-select" aria-label="Select as-of date"></select>
       <input type="date" id="asof-calendar" aria-label="Jump to date via calendar" title="Jump to date via calendar">
     </div>
     <nav>
       <a href="#exposures" id="t-exposures" class="on">Exposures</a>
-      <a href="#stress" id="t-stress">Stress test</a>
+      <a href="#stress" id="t-stress">Stress test <span class="tag" style="font-size:9px;padding:2px 5px;margin-left:4px;vertical-align:middle">Soon</span></a>
     </nav>
   </div>
 </header>
@@ -196,9 +206,11 @@ td{padding:7px 6px;text-align:right;font-family:"DM Mono",monospace;white-space:
     <section id="v-exposures" class="card">
       <h2>Macro-factor exposure</h2>
       <div class="sub">Estimated P&amp;L in bps of NAV for a +1σ move in each factor.</div>
+      <div class="hint" id="attribution-note">Macro-adjusted PC1: shared exposure is attributed to the seven macro factors. This is not a causal estimate or forecast.</div>
       <div id="stats" class="stats"></div>
       <div id="take" class="take"></div>
       <div id="bars"></div>
+      <div id="risk-attribution" class="scroll"></div>
 
       <details id="contrib">
         <summary>Contribution by position</summary>
@@ -216,27 +228,40 @@ td{padding:7px 6px;text-align:right;font-family:"DM Mono",monospace;white-space:
 
     <!-- Stress Test View -->
     <section id="v-stress" class="card hide">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div>
-          <h2>Stress test</h2>
-          <div class="sub">Pick a scenario or dial the shocks yourself (in σ).</div>
+      <div class="cs-card">
+        <span class="cs-tag">Coming Soon</span>
+        <h2>Macro Stress Testing &amp; Scenario Modeling</h2>
+        <div class="sub">
+          A dedicated stress testing engine is currently in development to simulate severe macro shocks, historical tail-risk regimes, and non-linear FX portfolio drawdowns.
         </div>
-        <button class="rst-btn" id="rst-shocks">Reset dials</button>
+        <div class="cs-features">
+          <div class="cs-feature">
+            <b>Multi-Factor Shock Dials</b>
+            <p>Simulate simultaneous macro shocks across Equities, Crude Oil, Copper, and Volatility to evaluate tail risk.</p>
+          </div>
+          <div class="cs-feature">
+            <b>Historical Crisis Replays</b>
+            <p>Back-stress current positions against past market events like the March 2020 COVID shock and the 2022 Fed rate hike cycle.</p>
+          </div>
+          <div class="cs-feature">
+            <b>Reverse Stress Testing</b>
+            <p>Solve for the minimal factor dislocations and currency moves required to trigger risk-limit breaches.</p>
+          </div>
+        </div>
       </div>
 
-      <div class="chips" id="presets"></div>
-      <div class="lbl">Estimated portfolio P&amp;L</div>
-      <div class="big" id="pnl">0<small>bps of NAV</small></div>
-      <div id="sbars" style="margin-top:14px"></div>
-
-      <details open>
-        <summary>Shock dials</summary>
+      <details open style="margin-top:20px">
+        <summary style="font-weight:600">Prototype Shock Dials (Preview)</summary>
+        <div class="sub" style="margin:8px 0 14px">Interactive preview of upcoming scenario dials and presets.</div>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
+          <button class="rst-btn" id="rst-shocks">Reset dials</button>
+        </div>
+        <div class="chips" id="presets"></div>
+        <div class="lbl">Estimated portfolio P&amp;L</div>
+        <div class="big" id="pnl">0<small>bps of NAV</small></div>
+        <div id="sbars" style="margin-top:14px"></div>
         <div id="sliders" style="margin-top:10px"></div>
-      </details>
-
-      <details>
-        <summary>P&amp;L by position</summary>
-        <div class="scroll" id="ptable"></div>
+        <div class="scroll" id="ptable" style="margin-top:14px"></div>
       </details>
     </section>
   </main>
@@ -246,10 +271,10 @@ td{padding:7px 6px;text-align:right;font-family:"DM Mono",monospace;white-space:
 <script>
 // Model values are loaded from the live API or the generated static snapshot.
 var CCY = ['EUR','GBP','AUD','NZD','USD','CAD','CHF','JPY','NOK','SEK'];
-var F = [], L = {}, PRE = {}, MODEL = null;
+var F = [], L = {}, PRE = {}, MODEL = null, BASE_MODEL = null;
 
 var S = [], dir = 1, shock = F.map(function(){return 0}), preset = '';
-var lastAdded = null, serverOnline = false;
+var lastAdded = null, serverOnline = false, riskRequestVersion = 0;
 function ensureShockSize(){
   if (shock.length !== F.length) shock = F.map(function(){ return 0; });
 }
@@ -272,6 +297,25 @@ function validModel(data){
     data.specific_variances && ccy.every(function(c){ return Number.isFinite(data.specific_variances[c]); });
 }
 
+function resolveAdjustedModel(data){
+  var adjusted = data && data.attribution_views && data.attribution_views.macro_adjusted;
+  if (!adjusted || adjusted.status !== 'ok') return null;
+  // Never inherit original-basis matrices or loadings when an adjusted
+  // payload is incomplete: that would silently display the wrong model.
+  if (!['asset_exposures','factor_covariance','loadings','factors'].every(function(k){
+    return Object.prototype.hasOwnProperty.call(adjusted, k);
+  })) return null;
+  var model = Object.assign({}, data, adjusted);
+  if (!validModel(model) || !model.loadings || !Array.isArray(model.factors)) return null;
+  var currencies = ['AUD','CAD','CHF','EUR','GBP','JPY','NOK','NZD','SEK','USD'];
+  if (!currencies.every(function(c){
+    return Array.isArray(model.loadings[c]) && model.loadings[c].length === 8 &&
+      model.loadings[c].every(Number.isFinite);
+  })) return null;
+  if (!model.factors.every(function(f){ return f && typeof f.name === 'string' && Number.isFinite(f.sigma_bps); })) return null;
+  return model;
+}
+
 var $ = function(id){ return document.getElementById(id); };
 var fmt = function(x, d){
   d = d == null ? 1 : d;
@@ -289,7 +333,7 @@ var vec = function(p){
 };
 
 // Exact factor and specific variance decomposition in backend log-return units.
-function localRisk(){
+function localRisk(bpsSensitivity){
   var x = MODEL.asset_exposures, cov = MODEL.factor_covariance;
   var ccy = ['AUD','CAD','CHF','EUR','GBP','JPY','NOK','NZD','SEK'];
   var fx = Array(8).fill(0), sx = Array(9).fill(0);
@@ -300,12 +344,23 @@ function localRisk(){
     if (bi >= 0) sx[bi] += w;
     if (qi >= 0) sx[qi] -= w;
   });
-  var fv = 0;
-  for (var i=0;i<8;i++) for (var j=0;j<8;j++) fv += fx[i] * cov[i][j] * fx[j];
+  var factorVariances = Array(8).fill(0), fv = 0;
+  for (var i=0;i<8;i++){
+    for (var j=0;j<8;j++) factorVariances[i] += fx[i] * cov[i][j] * fx[j];
+    fv += factorVariances[i];
+  }
   var sv = ccy.reduce(function(a,c,i){ return a + sx[i] * sx[i] * MODEL.specific_variances[c]; },0);
   var tv = fv + sv, ann = Math.sqrt(252) * 100;
+  var contributionScale = factorVariances.reduce(function(a,v){ return a+Math.abs(v); }, Math.abs(sv));
+  var hasRisk = Number.isFinite(tv) && tv > Number.EPSILON * Math.max(contributionScale, Number.MIN_VALUE) * 16;
+  var factorContributions = F.map(function(f,i){
+    return {name:f[0], variancePct:hasRisk ? factorVariances[i] / tv * 100 : null,
+      bpsSensitivity:bpsSensitivity && Number.isFinite(bpsSensitivity[i]) ? bpsSensitivity[i] : 0};
+  });
+  var specificPct = hasRisk ? sv / tv * 100 : null;
   return {factor:Math.sqrt(Math.max(fv,0))*ann, specific:Math.sqrt(Math.max(sv,0))*ann,
-    total:Math.sqrt(Math.max(tv,0))*ann, ratio:tv > 1e-12 ? sv/tv*100 : 0};
+    total:Math.sqrt(Math.max(tv,0))*ann, ratio:specificPct,
+    factorContributions:factorContributions, specificPct:specificPct};
 }
 
 // Populate currency dropdowns
@@ -423,10 +478,12 @@ function heat(v, max){
 
 function render(){
   if (!MODEL){
+    riskRequestVersion++;
     S = [];
     $('plist').innerHTML = '<div class="none">Portfolio input is disabled while model data is unavailable.</div>';
     $('pcount').textContent = '';
     $('stats').innerHTML = '';
+    $('risk-attribution').innerHTML = '';
     $('take').textContent = '';
     $('bars').innerHTML = '<div class="empty">Model data is unavailable. Factor exposure and stress results cannot be calculated.</div>';
     $('ctable').innerHTML = '';
@@ -466,10 +523,12 @@ function render(){
   });
 
   if (!S.length){
+    riskRequestVersion++;
     $('stats').innerHTML = '';
     $('take').textContent = '';
     $('bars').innerHTML = '<div class="empty">Your factor exposures will appear here.<br>Add a pair on the left to get started.</div>';
     $('ctable').innerHTML = '';
+    $('risk-attribution').innerHTML = '';
     $('contrib').classList.add('hide');
     $('risk-decomp').classList.add('hide');
   } else {
@@ -518,14 +577,21 @@ function render(){
     }).join('');
 
     if (MODEL){
-      var risk = localRisk();
+      var risk = localRisk(tot);
       var statTail = [
         ['Total Vol', risk.total.toFixed(2) + '% p.a.'],
         ['Factor Vol', risk.factor.toFixed(2) + '% p.a.'],
         ['Specific Vol', risk.specific.toFixed(2) + '% p.a.'],
-        ['Specific %', risk.ratio.toFixed(0) + '%']
+        ['Specific %', risk.ratio == null ? '—' : risk.ratio.toFixed(0) + '%']
       ];
       $('stats').innerHTML += statTail.map(function(s){ return '<div class="stat"><span class="lbl">' + s[0] + '</span><b>' + s[1] + '</b></div>'; }).join('');
+      $('risk-attribution').innerHTML = '<div class="lbl" style="margin-top:20px">Forecast variance contribution · active basis</div>' +
+        '<div class="hint">Signed variance shares can be negative or exceed 100% because factors are correlated. Sensitivity is P&amp;L for a +1σ move.</div>' +
+        '<table><tr><th>Factor</th><th>+1σ P&amp;L (bps)</th><th>Variance share</th></tr>' +
+        risk.factorContributions.map(function(c){
+          return '<tr><td>' + c.name + '</td><td>' + fmt(c.bpsSensitivity) + '</td><td class="' + cls(c.variancePct) + '">' + (c.variancePct == null ? '—' : fmt(c.variancePct) + '%') + '</td></tr>';
+        }).join('') + '<tr><td>Residual specific</td><td>—</td><td>' + (risk.specificPct == null ? '—' : fmt(risk.specificPct) + '%') + '</td></tr>' +
+        '<tr><td><b>Total variance</b></td><td>—</td><td><b>' + (risk.specificPct == null ? 'Unavailable (zero variance)' : fmt(risk.factorContributions.reduce(function(a,c){ return a+c.variancePct; },0)+risk.specificPct) + '%') + '</b></td></tr></table>';
     }
     if (serverOnline){
       syncServerRisk();
@@ -536,6 +602,7 @@ function render(){
 }
 
 function syncServerRisk(){
+  var requestVersion = ++riskRequestVersion;
   if (!S.length) return;
   var asof = $('asof-select').value;
   var payload = {
@@ -548,6 +615,7 @@ function syncServerRisk(){
     body: JSON.stringify(payload)
   }).then(function(r){ return r.json(); })
     .then(function(res){
+      if (requestVersion !== riskRequestVersion) return;
       if (!res || !res.data) return;
       var d = res.data;
       var statsHTML = [
@@ -557,7 +625,7 @@ function syncServerRisk(){
         ['Total Vol', d.total_vol_ann_pct.toFixed(2) + '% p.a.'],
         ['Factor Vol', d.factor_vol_ann_pct.toFixed(2) + '% p.a.'],
         ['Specific Vol', d.specific_vol_ann_pct.toFixed(2) + '% p.a.'],
-        ['Specific %', d.specific_ratio_pct.toFixed(0) + '%']
+        ['Specific %', d.specific_ratio_pct == null ? '—' : d.specific_ratio_pct.toFixed(0) + '%']
       ];
       $('stats').innerHTML = statsHTML.map(function(s){
         return '<div class="stat"><span class="lbl">' + s[0] + '</span><b>' + s[1] + '</b></div>';
@@ -589,9 +657,7 @@ function renderStress(tot){
 }
 
 function buildStress(){
-  $('presets').innerHTML = Object.keys(PRE).map(function(k){
-    return '<button class="chip' + (preset === k ? ' on' : '') + '" data-p="' + k + '">' + k + '</button>';
-  }).join('');
+  $('presets').innerHTML = '<div class="hint">Presets are unavailable for macro-adjusted PC1 because the shock has a different meaning.</div>';
 
   $('sliders').innerHTML = F.map(function(f, i){
     return '<div class="sl">' +
@@ -603,12 +669,7 @@ function buildStress(){
 }
 
 $('presets').onclick = function(e){
-  var p = e.target.dataset.p;
-  if (!p) return;
-  preset = preset === p ? '' : p;
-  shock = preset ? PRE[p].slice() : F.map(function(){ return 0; });
-  buildStress();
-  render();
+  return;
 };
 
 $('sliders').oninput = function(e){
@@ -658,22 +719,33 @@ function loadServerModel(asofDate){
         if (!validModel(data) || !data.generated_at || !data.source) throw new Error('invalid snapshot');
         applyModel(data, true);
       }).catch(function(){
-        serverOnline = false; MODEL = null;
-        setModelAvailability(false);
-        $('db-dot').className = 'dot warn';
-        $('db-dot').title = 'Model snapshot unavailable';
-        $('snapshot-notice').textContent = 'Model data is unavailable. Refresh the published snapshot or connect to the local model server.';
-        $('asof-select').innerHTML = '<option>Unavailable</option>';
-        $('asof-select').disabled = true;
-        $('asof-calendar').disabled = true;
-        render();
+        setModelUnavailable('Model data is unavailable. Refresh the published snapshot or connect to the local model server.');
       });
     });
 }
 
+function setModelUnavailable(message){
+  serverOnline = false; MODEL = null; BASE_MODEL = null;
+  setModelAvailability(false);
+  $('db-dot').className = 'dot warn';
+  $('db-dot').title = 'Model snapshot unavailable';
+  $('snapshot-notice').textContent = message;
+  var sl = $('asof-static-label');
+  if (sl){ sl.textContent = 'Unavailable'; sl.classList.remove('hide'); }
+  $('asof-select').classList.add('hide');
+  $('asof-calendar').classList.add('hide');
+  render();
+}
+
 function applyModel(data, isStatic){
+      var adjusted = resolveAdjustedModel(data);
+      if (!adjusted){
+        setModelUnavailable('Macro-adjusted model data is unavailable for this date. Refresh the model before calculating exposures.');
+        return;
+      }
       serverOnline = !isStatic;
-      MODEL = data;
+      BASE_MODEL = data;
+      MODEL = adjusted;
       setModelAvailability(true);
       $('db-dot').className = isStatic ? 'dot warn' : 'dot';
       $('db-dot').title = isStatic ? 'Static model snapshot' : 'Connected to SQLite database';
@@ -682,51 +754,86 @@ function applyModel(data, isStatic){
         : 'Live database model · as of ' + data.asof_date + '. Portfolio inputs are sent only to this local server for risk calculation.';
 
       // Update factor metadata and loadings from SQLite
-      if (data.factors && data.factors.length){
-        F = data.factors.map(function(f){
+      if (MODEL.factors && MODEL.factors.length){
+        F = MODEL.factors.map(function(f){
           return [f.name, f.ticker, f.desc, f.sigma_bps];
         });
       }
-      if (data.loadings) L = data.loadings;
+      if (MODEL.loadings) L = MODEL.loadings;
       if (data.presets) PRE = data.presets;
       if (data.currencies) CCY = data.currencies;
       ensureShockSize();
 
-      // Populate asof dropdown with year grouping
       var sel = $('asof-select');
-      sel.innerHTML = '';
-      var dates = isStatic ? [data.asof_date] : (data.available_dates || [data.asof_date]);
-      var groups = {};
-      dates.forEach(function(d){
-        var yr = d.substring(0, 4);
-        if (!groups[yr]) groups[yr] = [];
-        groups[yr].push(d);
-      });
-      Object.keys(groups).sort().reverse().forEach(function(yr){
-        var grp = document.createElement('optgroup');
-        grp.label = yr + ' (' + groups[yr].length + ' dates)';
-        groups[yr].forEach(function(d){
-          var o = document.createElement('option');
-          o.value = d;
-          o.textContent = (d === dates[0]) ? d + ' (Latest)' : d;
-          if (d === data.asof_date) o.selected = true;
-          grp.appendChild(o);
-        });
-        sel.appendChild(grp);
-      });
-
-      // Synchronize calendar input min, max, value
       var cal = $('asof-calendar');
-      if (cal && dates.length){
-        cal.min = dates[dates.length - 1];
-        cal.max = dates[0];
-        cal.value = data.asof_date;
+      var staticLabel = $('asof-static-label');
+      var badgeWrap = $('asof-badge-wrap');
+
+      if (isStatic){
+        // In static hosted snapshot mode, show the static date label cleanly without a disabled select box
+        sel.classList.add('hide');
+        cal.classList.add('hide');
+        if (staticLabel){
+          staticLabel.classList.remove('hide');
+          staticLabel.textContent = data.asof_date;
+        }
+        if (badgeWrap){
+          badgeWrap.title = 'Static hosted snapshot (' + data.asof_date + '). Run python -m ui.server locally to select historical dates back to 2016.';
+          badgeWrap.style.cursor = 'pointer';
+        }
+      } else {
+        // In live server mode, show interactive select and calendar picker
+        if (staticLabel) staticLabel.classList.add('hide');
+        sel.classList.remove('hide');
+        cal.classList.remove('hide');
+        sel.disabled = false;
+        cal.disabled = false;
+        if (badgeWrap){
+          badgeWrap.title = 'Connected to SQLite database (' + (data.available_dates ? data.available_dates.length : 0) + ' sessions available)';
+          badgeWrap.style.cursor = '';
+        }
+
+        sel.innerHTML = '';
+        var dates = data.available_dates || [data.asof_date];
+        var groups = {};
+        dates.forEach(function(d){
+          var yr = d.substring(0, 4);
+          if (!groups[yr]) groups[yr] = [];
+          groups[yr].push(d);
+        });
+        Object.keys(groups).sort().reverse().forEach(function(yr){
+          var grp = document.createElement('optgroup');
+          grp.label = yr + ' (' + groups[yr].length + ' dates)';
+          groups[yr].forEach(function(d){
+            var o = document.createElement('option');
+            o.value = d;
+            o.textContent = (d === dates[0]) ? d + ' (Latest)' : d;
+            if (d === data.asof_date) o.selected = true;
+            grp.appendChild(o);
+          });
+          sel.appendChild(grp);
+        });
+
+        // Synchronize calendar input min, max, value
+        if (cal && dates.length){
+          cal.min = dates[dates.length - 1];
+          cal.max = dates[0];
+          cal.value = data.asof_date;
+        }
       }
 
-      $('asof-select').disabled = isStatic;
-      $('asof-calendar').disabled = isStatic;
+      preset = '';
+      shock = F.map(function(){ return 0; });
       buildStress();
       render();
+}
+
+if ($('asof-badge-wrap')){
+  $('asof-badge-wrap').onclick = function(){
+    if (!serverOnline && MODEL){
+      alert('Hosted Static Snapshot Mode\n\nThis deployment serves a verified static model snapshot as of ' + MODEL.asof_date + '.\n\nTo interactively switch between all 2,392 historical evaluation dates (2016\u20132026), run the local server from the repository root:\n\n    python -m ui.server\n\nand open http://127.0.0.1:8000.');
+    }
+  };
 }
 
 $('asof-select').onchange = function(){
