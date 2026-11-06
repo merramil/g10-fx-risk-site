@@ -323,6 +323,11 @@ var fmt = function(x, d){
   if (+r === 0) return (0).toFixed(d);
   return (x > 0 ? '+' : '\u2212') + Math.abs(x).toFixed(d);
 };
+function factorMoveLabel(factor){
+  if (!factor || !Number.isFinite(factor.sigma)) return '—';
+  if (factor.ticker === 'PC1') return factor.sigma.toFixed(2) + ' score units';
+  return (factor.sigma * 100).toFixed(2) + '%';
+}
 var cls = function(x){ return x > 0.05 ? 'up' : x < -0.05 ? 'dn' : ''; };
 
 // Vector of factor moves for one position: w * (L[base] - L[quote])
@@ -586,12 +591,12 @@ function render(){
       ];
       $('stats').innerHTML += statTail.map(function(s){ return '<div class="stat"><span class="lbl">' + s[0] + '</span><b>' + s[1] + '</b></div>'; }).join('');
       $('risk-attribution').innerHTML = '<div class="lbl" style="margin-top:20px">Forecast variance contribution · active basis</div>' +
-        '<div class="hint">Signed variance shares can be negative or exceed 100% because factors are correlated. Sensitivity is P&amp;L for a +1σ move.</div>' +
-        '<table><tr><th>Factor</th><th>+1σ P&amp;L (bps)</th><th>Variance share</th></tr>' +
-        risk.factorContributions.map(function(c){
-          return '<tr><td>' + c.name + '</td><td>' + fmt(c.bpsSensitivity) + '</td><td class="' + cls(c.variancePct) + '">' + (c.variancePct == null ? '—' : fmt(c.variancePct) + '%') + '</td></tr>';
-        }).join('') + '<tr><td>Residual specific</td><td>—</td><td>' + (risk.specificPct == null ? '—' : fmt(risk.specificPct) + '%') + '</td></tr>' +
-        '<tr><td><b>Total variance</b></td><td>—</td><td><b>' + (risk.specificPct == null ? 'Unavailable (zero variance)' : fmt(risk.factorContributions.reduce(function(a,c){ return a+c.variancePct; },0)+risk.specificPct) + '%') + '</b></td></tr></table>';
+        '<div class="hint">Signed variance shares can be negative or exceed 100% because factors are correlated. +1σ P&amp;L is in bps of NAV. Factor moves show long-run daily-equivalent model scales (84-session EWMA variance, lag-2 Newey–West, VRA), not exact one-day forecasts; macro factors are %, VIX is relative percentage change in its level, and residual PC1 is in score units.</div>' +
+        '<table><tr><th>Factor</th><th>+1σ factor move</th><th>+1σ P&amp;L (bps)</th><th>Variance share</th></tr>' +
+        risk.factorContributions.map(function(c, i){
+          return '<tr><td>' + c.name + '</td><td>' + factorMoveLabel(MODEL.factors[i]) + '</td><td>' + fmt(c.bpsSensitivity) + '</td><td class="' + cls(c.variancePct) + '">' + (c.variancePct == null ? '—' : fmt(c.variancePct) + '%') + '</td></tr>';
+        }).join('') + '<tr><td>Residual specific</td><td>—</td><td>—</td><td>' + (risk.specificPct == null ? '—' : fmt(risk.specificPct) + '%') + '</td></tr>' +
+        '<tr><td><b>Total variance</b></td><td>—</td><td>—</td><td><b>' + (risk.specificPct == null ? 'Unavailable (zero variance)' : fmt(risk.factorContributions.reduce(function(a,c){ return a+c.variancePct; },0)+risk.specificPct) + '%') + '</b></td></tr></table>';
     }
     if (serverOnline){
       syncServerRisk();
