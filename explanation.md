@@ -72,7 +72,7 @@ my end goal in this is, I start out with 9 XXX-USD stuff, and then u can back ou
 this is why i turned it into 8 factors - PC2/3 I still run and it shows that the residual returns isn't entirely independent - there is def some correlation - but - wow, did not think US beta would be that extreme
 
 then, after running all this - i think i was explaining like 70% of the variance or smth, the vol forecasts were good, everything seemed pretty good, but i feel overall, it's important to like just as a person with some background in the subject matter - just read through the results urself - see if it makes any sense beyond the headline stats
-i went through them - was very surprised at how little oil was impacting the ccys - there were 2 reasons to this - a) norway had good positive beta to oil prices and b) currencies are relative, but was still a bit weaker than i would have expected
+i went through them - was very surprised at how little oil was impacting the ccys - there were 2 responses to this - a) norway had good positive beta to oil prices and b) currencies are relative, but was still a bit weaker than i would have expected
 i had an interesting idea to test correlation between the 7 macro factors and the PC1 (USD market beta) - and there seemed to be pretty high correlation
 so the final step i did is - we see what part of PC1 can be explained by the 7 macro factors, and then add that back to the original macro factors - so the final PC1/USD beta you see - is like PC1 stripped of correlation to the original 7 macro factors
 
